@@ -1,0 +1,50 @@
+﻿@model BonTemps.Models.Reservering
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Maak</h1>
+
+<h4>Reservering</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="Tafel" value="1" />
+            <div class="form-group">
+                <label asp-for="Datum" class="control-label"></label>
+                <input asp-for="Datum" type="date" class="form-control" />
+                <span asp-validation-for="Datum" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tijd" class="control-label"></label>
+                <input asp-for="Tijd" type="time" class="form-control" />
+                <span asp-validation-for="Tijd" class="text-danger"></span>
+            </div>
+            @if (User.IsInRole("Customer"))
+            {
+                <input type="hidden" asp-for="KlantId" value=""/>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label asp-for="KlantId" class="control-label"></label>
+                    <select asp-for="KlantId" class="form-control" asp-items="ViewBag.KlantId"></select>
+                </div>
+            }
+            <div class="form-group">
+                <input type="submit" value="Boek reservering" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Terug naar lijst</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,46 @@
+﻿@model BonTemps.Models.Reservering
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Verwijderen</h1>
+
+<h3>Weet je zeker dat je deze reservering wilt verwijderen?</h3>
+<div>
+    <h4>Reservering</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Datum)
+        </dt>
+        <dd class="col-sm-10">
+            @*@item.Datum.ToString("dd-MM-yyyy")*@
+            @Model.Datum.ToString("dd MMM yyyy")
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tijd)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Tijd.ToString("HH:mm")
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Klant)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Klant.Naam)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tafel)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Tafel)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Verwijder" class="btn btn-danger" /> |
+        <a asp-action="Index">Terug naar lijst</a>
+    </form>
+</div>

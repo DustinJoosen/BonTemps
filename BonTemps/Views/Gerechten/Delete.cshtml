@@ -1,0 +1,33 @@
+﻿@model BonTemps.Models.Gerecht
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Verwijderen</h1>
+
+<h3>Weet je zeker dat je dit gerecht wilt verwijderen?</h3>
+<div>
+    <h4>Gerecht</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.GerechtSoort)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.GerechtSoort.Soort)
+        </dd class>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Naam)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Naam)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Verwijder" class="btn btn-danger" /> |
+        <a asp-action="Index">Terug naar lijst</a>
+    </form>
+</div>

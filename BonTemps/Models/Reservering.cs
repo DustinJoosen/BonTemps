@@ -20,6 +20,9 @@ namespace BonTemps.Models
 		public int KlantId { get; set; }
 		public Klant Klant { get; set; }
 
+		[Required]
+		public int Tafel { get; set; }
+
 		public virtual ICollection<BestelRegel> BestelRegels { get; set; }
 		public virtual ICollection<ReserveringMenu> ReserveringMenus { get; set; }
 	}

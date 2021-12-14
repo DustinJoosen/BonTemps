@@ -1,0 +1,30 @@
+﻿@model BonTemps.Models.Gerecht
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Gerecht</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.GerechtSoort)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.GerechtSoort.Soort)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Naam)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Naam)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Wijzig</a> |
+    <a asp-action="Index">Terug naar lijst</a>
+</div>

@@ -1,0 +1,42 @@
+﻿@model BonTemps.Models.Reservering
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Reservering</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Datum)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Datum.ToString("dd MMM yyyy")
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Tijd)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Tijd.ToString("HH:mm")
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Klant)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Klant.Naam)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tafel)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Tafel)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Wijzig</a> |
+    <a asp-action="Index">Terug naar lijst</a>
+</div>

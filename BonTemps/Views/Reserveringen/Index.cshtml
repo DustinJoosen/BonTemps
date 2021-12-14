@@ -1,0 +1,47 @@
+﻿@model IEnumerable<BonTemps.Models.Reservering>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Reserveringen</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Boek reservering</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Datum/Tijd
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Klant)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tafel)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @item.Datum.ToString("dd MMM yyyy") @item.Tijd.ToString("HH:mm")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Klant.Naam)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tafel)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Wijzig</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
