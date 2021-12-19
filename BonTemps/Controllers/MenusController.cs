@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BonTemps.Data;
 using BonTemps.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BonTemps.Controllers
 {
+    [Authorize(Roles = "Employee")]
     public class MenusController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,16 +22,19 @@ namespace BonTemps.Controllers
         }
 
         // GET: Menus
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var menus = await _context.Menus
                 .Include(s => s.MenuSoort)
+                .Include(s => s.MenuGerechten).ThenInclude(s => s.Gerecht)
                 .ToListAsync();
 
             return View(menus);
         }
 
         // GET: Menus/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -153,6 +158,66 @@ namespace BonTemps.Controllers
             _context.Menus.Remove(menu);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddMenuGerecht(int id, int gerechtId)
+		{
+            //retrieve the menu and gerecht based on the id's
+            var menu = await _context.Menus
+                .Include(s => s.MenuGerechten).ThenInclude(s => s.Gerecht)
+                .SingleOrDefaultAsync(s => s.Id == id);
+
+            var gerecht = await _context.Gerechten.FindAsync(gerechtId);
+
+            if(menu == null || gerecht == null)
+			{
+                return NotFound();
+			}
+
+            //if the menu already has the gerecht, return. Otherwise add it
+            if(menu.MenuGerechten.Select(s => s.Gerecht).Contains(gerecht))
+			{
+                return RedirectToAction(nameof(Details), new { Id = id });
+			}
+			else
+			{
+                menu.MenuGerechten.Add(new MenuGerecht
+                {
+                    MenuId = menu.Id,
+                    GerechtId = gerechtId
+                });
+                await _context.SaveChangesAsync();
+			}
+
+            return RedirectToAction(nameof(Details), new { Id = id });
+
+        }
+
+        public async Task<IActionResult> RemoveMenuGerecht(int menuid, int gerechtid)
+		{
+            //retrieve the menu and gerecht based on the id's
+            var menu = await _context.Menus
+                .Include(s => s.MenuGerechten).ThenInclude(s => s.Gerecht)
+                .SingleOrDefaultAsync(s => s.Id == menuid);
+
+            var gerecht = await _context.Gerechten.FindAsync(gerechtid);
+
+            if (menu == null || gerecht == null)
+            {
+                return NotFound();
+            }
+
+            var menuGerecht = menu.MenuGerechten.SingleOrDefault(s => s.GerechtId == gerechtid && s.MenuId == menuid);
+            
+            //if the menu has the gerecht, remove it
+            if (menuGerecht != null)
+			{
+                menu.MenuGerechten.Remove(menuGerecht);
+                await _context.SaveChangesAsync();
+			}
+
+            return RedirectToAction(nameof(Details), new { Id = menuid });
         }
 
         private bool MenuExists(int id)

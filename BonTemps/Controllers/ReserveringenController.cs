@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BonTemps.Data;
 using BonTemps.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BonTemps.Controllers
 {
@@ -23,6 +24,7 @@ namespace BonTemps.Controllers
         }
 
         // GET: Reserveringen
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Index()
         {
             var reserveringen = await _context.Reserveringen
@@ -34,6 +36,7 @@ namespace BonTemps.Controllers
         }
 
         // GET: Reserveringen/Details/5
+        [Authorize(Roles = "Customer, Employee")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -53,6 +56,7 @@ namespace BonTemps.Controllers
         }
 
         // GET: Reserveringen/Create
+        [Authorize(Roles = "Customer, Employee")]
         public IActionResult Create()
         {
             ViewData["KlantId"] = new SelectList(_context.Klanten, "Id", "Naam");
@@ -64,6 +68,7 @@ namespace BonTemps.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Customer, Employee")]
         public async Task<IActionResult> Create([Bind("Id,Datum,Tijd,KlantId,Tafel")] Reservering reservering)
         {
 			if (User.IsInRole("Customer"))
@@ -83,10 +88,16 @@ namespace BonTemps.Controllers
             _context.Add(reservering);
             await _context.SaveChangesAsync();
 
+			if (User.IsInRole("Customer"))
+			{
+                return RedirectToAction(nameof(Details), new { Id = reservering.Id });
+			}
+
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Reserveringen/Edit/5
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -110,6 +121,7 @@ namespace BonTemps.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Datum,Tijd,KlantId")] Reservering reservering)
         {
             if (id != reservering.Id)
@@ -142,6 +154,7 @@ namespace BonTemps.Controllers
         }
 
         // GET: Reserveringen/Delete/5
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -163,12 +176,81 @@ namespace BonTemps.Controllers
         // POST: Reserveringen/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var reservering = await _context.Reserveringen.FindAsync(id);
             _context.Reserveringen.Remove(reservering);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddReserveringMenu(int id, int menuId, int aantal)
+        {
+            //retrieve the reservering and menu based on the id's
+            var reservering = await _context.Reserveringen
+                .Include(s => s.ReserveringMenus).ThenInclude(s => s.Menu)
+                .SingleOrDefaultAsync(s => s.Id == id);
+
+            var menu = await _context.Menus.FindAsync(menuId);
+
+            if (menu == null || reservering == null)
+            {
+                return NotFound();
+            }
+
+            //if the reservering already has the menu, return. Otherwise add it
+            if (reservering.ReserveringMenus.Select(s => s.Menu).Contains(menu))
+            {
+                var reserveringmenu = reservering.ReserveringMenus.SingleOrDefault(s => s.MenuId == menuId);
+                reserveringmenu.Aantal += aantal;
+
+                if(reserveringmenu.Aantal <= 0)
+				{
+                    _context.ReserveringMenus.Remove(reserveringmenu);
+				}
+
+            }
+            else
+            {
+                reservering.ReserveringMenus.Add(new ReserveringMenu
+                {
+                    ReserveringId = reservering.Id,
+                    MenuId = menu.Id,
+                    Aantal = aantal
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { Id = id });
+
+        }
+
+        public async Task<IActionResult> RemoveReserveringMenu(int reserveringid, int menuid)
+        {
+            //retrieve the reservering and menu based on the id's
+            var reservering = await _context.Reserveringen
+                .Include(s => s.ReserveringMenus).ThenInclude(s => s.Menu)
+                .SingleOrDefaultAsync(s => s.Id == reserveringid);
+
+            var menu = await _context.Menus.FindAsync(menuid);
+
+            if (menu == null || reservering == null)
+            {
+                return NotFound();
+            }
+
+            var reserveringMenu = reservering.ReserveringMenus.SingleOrDefault(s => s.MenuId == menuid && s.ReserveringId== reserveringid);
+
+            //if the menu has the gerecht, remove it
+            if (reserveringMenu != null)
+            {
+                reservering.ReserveringMenus.Remove(reserveringMenu);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Details), new { Id = reserveringid });
         }
 
         private bool ReserveringExists(int id)

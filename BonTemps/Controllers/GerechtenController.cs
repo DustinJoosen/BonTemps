@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BonTemps.Data;
 using BonTemps.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BonTemps.Controllers
 {
+    [Authorize(Roles = "Employee")]
     public class GerechtenController : Controller
     {
         private readonly ApplicationDbContext _context;

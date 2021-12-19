@@ -6,9 +6,13 @@
 
 <h1>Menus</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Nieuw menu</a>
-</p>
+@if (User.IsInRole("Employee"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Nieuw menu</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -21,6 +25,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Prijs)
             </th>
+            <th>Gerechten</th>
             <th></th>
         </tr>
     </thead>
@@ -37,9 +42,24 @@
                 @Html.DisplayFor(modelItem => item.Prijs)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Wijzigen</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a>
+                <ul>
+                    @foreach (var gerecht in item.MenuGerechten.Select(s => s.Gerecht))
+                    {
+                        <li>@gerecht.Naam</li>
+                    }
+                </ul>
+            </td>
+            <td>
+                @if (User.IsInRole("Employee"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">Wijzigen</a> @("|")
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> @("|")
+                    <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a>
+                }
+                else
+                {
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                }
             </td>
         </tr>
 }

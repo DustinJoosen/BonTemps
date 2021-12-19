@@ -1,0 +1,44 @@
+﻿@model Reservering
+
+<table class="table">
+    <tr>
+        <th>Naam</th>
+        <th>Aantal</th>
+        <th></th>
+    </tr>
+    @foreach(var item in Model.ReserveringMenus)
+    {
+        <tr>
+            <td>@item.Menu.Naam</td>
+            <td>@item.Aantal</td>
+            <td>
+                <a asp-controller="Reserveringen" asp-action="RemoveReserveringMenu" asp-route-reserveringid="@Model.Id" asp-route-menuid="@item.Menu.Id">Verwijder</a>
+            </td>
+        </tr>
+    }
+</table>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddReserveringMenu">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="@Model.Id" />
+            <div class="form-group">
+                <label name="MenuId" class="control-label">Voeg menu toe</label>
+                <select name="MenuId" class="form-control" asp-items="ViewBag.MenuId"></select>
+            </div>
+            <div class="form-group">
+                <label name="Aantal" class="control-label">Aantal</label>
+                <input type="number" min="1" value="1" name="Aantal" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Voeg toe" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

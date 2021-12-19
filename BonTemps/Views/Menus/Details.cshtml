@@ -30,7 +30,13 @@
         </dd>
     </dl>
 </div>
+<h4>Gerechten</h4>
+@await Component.InvokeAsync("MenuGerechten", new { Id = Model.Id }) 
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Wijzig</a> |
-    <a asp-action="Index">Terug naar lijst</a>
+    @if (User.IsInRole("Employee"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Wijzig</a> @("|")
+    }
+    <a asp-action="Index">Terug naar kaart</a>
 </div>
