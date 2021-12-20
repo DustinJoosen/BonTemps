@@ -1,0 +1,61 @@
+﻿@model Reservering
+
+<table id="factuur_table">
+    <tr>
+        <td colspan="4">
+            @Model.Datum.ToShortDateString()<br />
+            Klant: @Model.Klant.Naam<br />
+            Tafel @Model.Tafel<br/>
+        </td>
+    </tr>
+    <tr>
+        <th>Item</th>
+        <th>Aantal</th>
+        <th>Prijs</th>
+        <th>Totaal prijs</th>
+    </tr>
+    @if (Model.ReserveringMenus.Any())
+    {
+        <tr>
+            <th colspan="4">Menus</th>
+        </tr>
+        @foreach (var reserveringmenu in Model.ReserveringMenus)
+        {
+            <tr>
+                <td>@reserveringmenu.Menu.Naam</td>
+                <td>@reserveringmenu.Aantal</td>
+                <td>€@reserveringmenu.Menu.Prijs</td>
+                <td>€@(reserveringmenu.Menu.Prijs * reserveringmenu.Aantal)</td>
+            </tr>
+        }
+    }
+
+    @if (Model.BestelRegels.Any())
+    {
+        <tr>
+            <th colspan="4">Dranken</th>
+        </tr>
+        @foreach (var bestelregel in Model.BestelRegels)
+        {
+            <tr>
+                <td>@bestelregel.Drank.Naam</td>
+                <td>@bestelregel.Aantal</td>
+                <td>@bestelregel.Drank.Prijs</td>
+                <td>@(bestelregel.Drank.Prijs * bestelregel.Aantal)</td>
+            </tr>
+        }
+    }
+
+    <tr>
+        <th colspan="3">Totaal</th>
+        <td>€@Model.TotalPrice()</td>
+    </tr>
+
+</table>
+
+<div class="disappears_when_printing py-3">
+    <a class="btn btn-primary" href="/tafels">Terug naar lijst</a> 
+    <a class="btn btn-primary" href="/Tafels/Bestellingen/@Model.Id">Bestellingen</a>
+    <button type="button" class="btn btn-primary" onclick="print_factuur()">Print</button>
+</div>
+

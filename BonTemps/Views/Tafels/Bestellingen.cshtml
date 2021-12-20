@@ -1,0 +1,47 @@
+﻿@model ReserveringDrankSoortenViewModel
+
+<h3>Bestellingen van reservering @Model.Reservering.Id</h3>
+<div class="d-flex">
+    <div class="col-8">
+        <div>
+            @foreach (var dranksoort in Model.DrankSoorten)
+            {
+                <table>
+                    <tr>
+                        <th>@dranksoort.Soort</th>
+                    </tr>
+                    @foreach (var drank in dranksoort.Dranken)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-action="addDrink" asp-route-drankid="@drank.Id" asp-route-reserveringid="@Model.Reservering.Id">
+                                    @drank.Naam (€@drank.Prijs)
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    </div>
+    <div class="col-4">
+        <h3>Drank Bestellingen</h3>
+        <table>
+            @foreach (var bestelregel in Model.Reservering.BestelRegels)
+            {
+                <tr>
+                    <td>@bestelregel.Aantal x</td>
+                    <td>@bestelregel.Drank.Naam</td>
+                    <td>
+                        <a asp-action="removeDrink" asp-route-drankid="@bestelregel.Drank.Id" asp-route-reserveringid="@Model.Reservering.Id">| Verwijder</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<div class="py-2">
+    <a href="/tafels">terug naar lijst</a> |
+    <a href="/tafels/factuur/@Model.Reservering.Id">factuur</a>
+</div>

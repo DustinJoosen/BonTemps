@@ -13,5 +13,7 @@ namespace BonTemps.Models
 		[Required]
 		[StringLength(80)]
 		public string Soort { get; set; }
+
+		public virtual ICollection<Drank> Dranken { get; set; }
 	}
 }

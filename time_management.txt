@@ -1,3 +1,16 @@
 13/12/2021	12:50-14:20		->	database klaar
 14/12/2021	10:15-12:20		->	crud pagina's
 19/12/2021	15:40-16:40		->	authorizatie, en begin aan tafels pagina
+20/12/2021	12:00-?			->	
+
+
+
+
+
+
+
+		90 minuten
+		125 minuten
+		60 minuten
+		
+totaal:		275 minuten		->	4.58 uur
